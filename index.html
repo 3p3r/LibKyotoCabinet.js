@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Cache-Control" content="no-cache">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="Lang" content="en">
+        <meta name="author" content="Sepehr Laal">
+        <meta name="description" content="Kyoto Cabinet port to JavaScript">
+        <meta name="keywords" content="Kyoto Cabinet, emcscripten, llvm, port, asmjs">
+        <title>LibKyotoCabinet.js</title>
+        <script type="text/javascript" src="https://raw.githubusercontent.com/vulture0/LibKyotoCabinet.js/master/libkyotocabinet.js"></script>
+        <script type="text/javascript">
+            KCOREADER     = 1 << 0;                    /**< open as a reader */
+            KCOWRITER     = 1 << 1;                    /**< open as a writer */
+            KCOCREATE     = 1 << 2;                    /**< writer creating */
+            KCOTRUNCATE = 1 << 3;                  /**< writer truncating */
+            KCOAUTOTRAN = 1 << 4;                  /**< auto transaction */
+            KCOAUTOSYNC = 1 << 5;                  /**< auto synchronization */
+            KCONOLOCK     = 1 << 6;                    /**< open without locking */
+            KCOTRYLOCK     = 1 << 7;                   /**< lock without blocking */
+            KCONOREPAIR = 1 << 8;                   /**< open without auto repair */
+
+            kcdbnew         = Module.cwrap('kcdbnew');
+            kcdbopen         = Module.cwrap('kcdbopen','number',['number','string','number']);
+            kcdbset         = Module.cwrap('kcdbset','number',['number','string','number','string','number']);
+            kcdbget         = Module.cwrap('kcdbget','string',['number','string','number','number']);
+            kcecodename     = Module.cwrap('kcecodename','string',['number']);
+            kcdbecode         = Module.cwrap('kcdbecode','number',['number']);
+            kcdbclose         = Module.cwrap('kcdbclose','number',['number']);
+            kcdbdel         = Module.cwrap('kcdbdel',null,['number']);
+
+
+            db = kcdbnew();
+            if (!kcdbopen(db, "-", KCOWRITER | KCOCREATE)) {
+                console.log("open error: " + kcecodename(kcdbecode(db)));
+            }
+            if (!kcdbset(db, "foo", 3, "hop", 3) ||
+                !kcdbset(db, "bar", 3, "step", 4) ||
+                !kcdbset(db, "baz", 3, "jump", 4)) {
+                console.log("set error: " + kcecodename(kcdbecode(db)));
+            }
+            vbuf = kcdbget(db, "foo", 3, 256);
+            if (vbuf) {
+                console.log(vbuf);
+            } else {
+                console.log("get error: " + kcecodename(kcdbecode(db)));
+            }
+            if (!kcdbclose(db)) {
+                console.log("close error: " + kcecodename(kcdbecode(db)));
+            }
+            kcdbdel(db);
+        </script>
+    </head>
+    <body>
+    <h1>LibKyotoCabinet.js</h1>
+    <h2>Look at your dev console to play with the library!</h2>
+    </body>
+</html>
