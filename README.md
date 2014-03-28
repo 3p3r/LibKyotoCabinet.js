@@ -45,4 +45,4 @@ Usage
 Live demo: [demo.html][1]
 
 
-  [1]: https://rawgithub.com/vulture0/LibKyotoCabinet.js/master/index.html
+  [1]: https://rawgithub.com/sepehr-laal/LibKyotoCabinet.js/master/index.html
